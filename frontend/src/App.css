@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+.App{
+    background-image: url("E:\InfiniTalk\frontend\assets\background_grid.png"); 
+    background-size: cover;
+    background-position: center; 
+    /* background-color: #6c51ab; */
+    color: rgb(12, 12, 12);
+
+}
