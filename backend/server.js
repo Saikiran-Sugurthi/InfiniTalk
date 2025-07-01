@@ -11,6 +11,7 @@ const chats=require("./data/data.js")
 const userRoutes=require("./routes/userRoutes.js");
 const connectToDB =require("./config/db.js");
 const { errorHandler, notFound } = require("./middlewares/errorMiddleWare.js");
+const chatRoutes=require("./routes/chatRoutes.js")
 const PORT=process.env.PORT || 3000;
 
 connectToDB();
@@ -23,6 +24,7 @@ app.use(cors({
 app.use(express.json());
 
 app.use("/api/user",userRoutes);
+app.use("/api/chat",chatRoutes);
 
 
 app.get("/",(req,res)=>{
