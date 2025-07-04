@@ -135,5 +135,50 @@ const renameGroup=asyncHandler(async(req,res)=>{
 
 });
 
+const addToGroup=asyncHandler(async(req,res)=>{
 
-module.exports={accessChat,fetchChats,createGroupChat,renameGroup}
+  const {chatId,userId}=req.body;
+
+  const updatedGroup=await Chat.findByIdAndUpdate(
+    chatId,{
+      $push:{users:userId}
+    },{
+      new:true
+    }
+  )
+
+  if(!updatedGroup){
+    res.status(404);
+    throw new Error("Chat Not Found !!!")
+  }else{
+    res.json(updatedGroup);
+  }
+
+});
+
+
+const removeFromGroup=asyncHandler(async(req,res)=>{
+    const {chatId,userId}=req.body;
+
+    const removedGroup=await Chat.findByIdAndUpdate(
+      chatId,
+      {
+        $pull:{users:userId}
+      },
+      {
+        new:true
+      }
+    )
+
+
+    if(!removedGroup){
+      res.status(404);
+      throw new Error("Chat Not Found!!!");
+    }
+    else{
+      res.json(removedGroup)
+    }
+})
+
+
+module.exports={accessChat,fetchChats,createGroupChat,renameGroup,removeFromGroup,addToGroup}
