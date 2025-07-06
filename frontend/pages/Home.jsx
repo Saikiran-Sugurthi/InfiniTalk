@@ -6,6 +6,8 @@ import Login from "../components/Authentication/Login"
 import SignUp from "../components/Authentication/Signup"
 import Box from '@mui/material/Box';
 import AppName from '../components/AppName';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -37,6 +39,17 @@ function a11yProps(index) {
 }
 
 export default function Home() {
+
+  const navigate=useNavigate();
+
+  useEffect(()=>{
+    const userInfo=JSON.parse(localStorage.getItem("userInfo"));
+
+    if(userInfo){
+      navigate("/chats")
+    }
+  })
+
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
