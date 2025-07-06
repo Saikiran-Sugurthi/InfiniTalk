@@ -1,39 +1,31 @@
-import { useState } from "react";
-import { useEffect } from "react";
-import { useContext } from "react";
-import { Children } from "react";
-import { createContext } from "react";
-
+import { useState, useEffect, useContext, createContext } from "react";
 import { useNavigate } from "react-router-dom";
 
-const ChatContext=createContext();
+const ChatContext = createContext();
 
-export default function ChatProvider({Children}){
+export default function ChatProvider({ children }) {  
 
-    const [user,setUser]=useState();
+  const [user, setUser] = useState();
+  const [selectedChat,setSelectedChat]=useState();
+  const [chats,setChats]=useState();
+  const navigate = useNavigate();
 
-   const navigate=useNavigate();
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    setUser(userInfo);
 
+    if (!userInfo) {
+      navigate("/");
+    }
+  }, [navigate]);
 
-    useEffect(()=>{
-        const userInfo=JSON.parse(localStorage.getItem("userInfo"));
-        
-        setUser(userInfo);
-
-        if(!userInfo){
-            navigate("/");
-        }
-
-    },[navigate])
-
-
-    return(
-        <ChatContext.Provider value={{user,setUser}}>{Children}</ChatContext.Provider>
-    )
-
+  return (
+    <ChatContext.Provider value={{ user, setUser,selectedChat,setSelectedChat,chats,setChats }}>
+      {children} 
+    </ChatContext.Provider>
+  );
 }
 
-
-export const ChatState=()=>{
-    return useContext(ChatContext);
-}
+export const ChatState = () => {
+  return useContext(ChatContext);
+};
