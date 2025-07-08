@@ -42,6 +42,10 @@ export default function Drawer() {
 
 
             const {data}=await axios.post("http://localhost:3000/api/chat",{userId},config);
+
+            if(!chats.find((c)=>c._id===data._id)) setChats([data,...chats]);
+
+
             setSelectedChat(data);
             setLoadingChat(false);
 
@@ -53,6 +57,9 @@ export default function Drawer() {
 
 
     }
+
+
+   
 
     const handleSearch=async()=>{
         if(!search){
@@ -68,7 +75,9 @@ export default function Drawer() {
                     Authorization:`Bearer ${user.token}`
                 },
             }
-            
+            console.log("User from context:", user);
+console.log("Token being sent:", user?.token);
+
 
             const {data}=await axios.get(`http://localhost:3000/api/user/?search=${search}`,config);
             console.log(data);
