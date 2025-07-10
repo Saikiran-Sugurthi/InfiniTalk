@@ -37,6 +37,37 @@ export default function GroupChatModal({children}) {
 
   const {user,chats,setChats}=ChatState();
 
+  const handleSubmit=async()=>{
+
+    if(!groupChatName || !selectedUsers){
+      showToast("Fill All The Fields !!!","error");
+      return;
+    }
+
+    try{
+
+        const config={
+          headers:{
+            Authorization:`Bearer ${user.token}`
+          }
+        }
+
+        const {data}=await axios.post(`http://localhost:3000/api/chat/group`,{name:groupChatName,users:JSON.stringify(selectedUsers.map((u)=>u._id))},config);
+        
+        setChats([data,...chats]);
+        handleClose();
+
+        showToast("Group Chat Created Succesfully !!!","success");
+
+
+    }
+    catch(err){
+      showToast(err.message,"error");
+    }
+
+
+  }
+
   const groupAdd=(userToAdd)=>{
 
       if(selectedUsers.includes(userToAdd)){
@@ -79,6 +110,7 @@ export default function GroupChatModal({children}) {
 
       setSearchResults(data);
       setLoading(false);
+      
 
       
 
@@ -131,7 +163,7 @@ export default function GroupChatModal({children}) {
             ))
           )}
 
-          <button
+          <button onClick={()=>handleSubmit()}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-md transition duration-200"
           >
             Create Chat
