@@ -27,7 +27,7 @@ export default function Drawer() {
     const [searchResults,setSearchResults]=useState([]);
     const [loadingChat,setLoadingChat]=useState([]);
 
-    const accessChat=async ({userId})=>{
+    const accessChat=async (userId)=>{
 
         try{
             setLoadingChat(true);
@@ -47,6 +47,7 @@ export default function Drawer() {
 
 
             setSelectedChat(data);
+             toggleDrawer(false);
             setLoadingChat(false);
 
         }

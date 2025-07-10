@@ -32,14 +32,12 @@ const MyChats = () => {
     setLoggedUser(storedUser);
     console.log("Stored userInfo:", storedUser);
 
-    fetchChats();
+    fetchChats();                     
   }, []);
 
   return (
      <div
-    className={`${
-      selectedChat ? "hidden" : "flex"
-    } flex-col bg-white p-4 w-full rounded-md shadow`}
+    className="flex flex-col bg-white p-4 w-full rounded-md shadow "
   >
     
     <div className="flex justify-between items-center mb-4">
@@ -78,3 +76,10 @@ const MyChats = () => {
 };
 
 export default MyChats;
+
+
+
+
+//  className={`${
+//       selectedChat ? "hidden" : "flex"
+//     } flex-col bg-white p-4 w-full rounded-md shadow`}
