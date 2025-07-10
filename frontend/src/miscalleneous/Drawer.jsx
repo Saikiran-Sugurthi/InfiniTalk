@@ -76,8 +76,8 @@ export default function Drawer() {
                     Authorization:`Bearer ${user.token}`
                 },
             }
-            console.log("User from context:", user);
-console.log("Token being sent:", user?.token);
+//             console.log("User from context:", user);
+// console.log("Token being sent:", user?.token);
 
 
             const {data}=await axios.get(`http://localhost:3000/api/user/?search=${search}`,config);

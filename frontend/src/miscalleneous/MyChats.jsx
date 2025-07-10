@@ -3,6 +3,7 @@ import axios from "axios";
 import { ChatState } from "../context/ChatProvider";
 import ChatLoading from "./ChatLoading";
 import { getSender } from "../config/ChatLogics";
+import GroupChatModal from "../miscalleneous/GropupChatModal"
 const MyChats = () => {
   const { user, chats, setChats, selectedChat, setSelectedChat } = ChatState();
   const [loggedUser, setLoggedUser] = useState();
@@ -43,10 +44,12 @@ const MyChats = () => {
     <div className="flex justify-between items-center mb-4">
       <p className="text-lg font-semibold">My Chats</p>
 
+      <GroupChatModal>
       <button className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium px-4 py-2 rounded-lg shadow-sm transition">
         New Group Chat
         <i className="fa-solid fa-plus"></i>
       </button>
+      </GroupChatModal>
     </div>
 <div className="flex flex-col items-center p-3 rounded-lg w-full h-full overflow-y-hidden bg-white">
 
