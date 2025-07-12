@@ -4,7 +4,7 @@ import { ChatState } from "../context/ChatProvider";
 import ChatLoading from "./ChatLoading";
 import { getSender } from "../config/ChatLogics";
 import GroupChatModal from "../miscalleneous/GropupChatModal"
-const MyChats = () => {
+const MyChats = ({fetchAgain}) => {
   const { user, chats, setChats, selectedChat, setSelectedChat } = ChatState();
   const [loggedUser, setLoggedUser] = useState();
 
@@ -32,9 +32,8 @@ const MyChats = () => {
     const storedUser = JSON.parse(localStorage.getItem("userInfo"));
     setLoggedUser(storedUser);
     console.log("Stored userInfo:", storedUser);
-
     fetchChats();                     
-  }, []);
+  }, [fetchAgain]);
 
   return (
      <div
