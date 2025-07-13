@@ -25,7 +25,7 @@ export default function GroupUpdateModal({fetchAgain,setFetchAgain}) {
   };
   const handleClose = () => setOpen(false);
 
-  const handleRemove = (user1) => {
+  const handleRemove = async(user1) => {
 
     if(selectedChat.groupAdmin._id!==user._id && user1._id!==user._id){
         showToast("Only Admins Can Remove Users !!!","error");
@@ -33,7 +33,34 @@ export default function GroupUpdateModal({fetchAgain,setFetchAgain}) {
     }
 
 
-    
+    try {
+    setLoading(true);
+    const config={
+        headers:{
+            Authorization:`Bearer ${user.token}`
+        }
+    }
+
+    const {data}=await axios.put("http://localhost:3000/api/chat/groupremove",{
+        chatId:selectedChat._id,
+        userId:user1._id
+    },config)
+
+
+    user1._id === user._id?setSelectedChat():setSelectedChat(data);
+
+    setFetchAgain(!fetchAgain);
+    setLoading(false);
+
+
+
+
+
+    } catch (error) {
+        setLoading(false)
+        showToast(error.message,"error");
+
+    }
 
 
 
@@ -66,6 +93,7 @@ export default function GroupUpdateModal({fetchAgain,setFetchAgain}) {
             setLoading(false);
  
         } catch (error) {
+            console.log(error);
             setLoading(false);
             showToast(error.message,"error");
         }
@@ -231,7 +259,7 @@ export default function GroupUpdateModal({fetchAgain,setFetchAgain}) {
                 <UserListItem key={u._id} user={u} handleFunction={()=>handleGroupAdd(u)} />
             ))}
                 <button
-                type="submit"
+                type="submit" onClick={()=>handleRemove(user)}
                 
                 className="mt-4 bg-red-500 text-white text-sm px-3 py-1 rounded hover:bg-red-600"
               >
