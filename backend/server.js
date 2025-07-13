@@ -13,6 +13,7 @@ const connectToDB =require("./config/db.js");
 const { errorHandler, notFound } = require("./middlewares/errorMiddleWare.js");
 const chatRoutes=require("./routes/chatRoutes.js")
 const PORT=process.env.PORT || 3000;
+const messageRoutes=require("./routes/messageRoutes.js")
 
 connectToDB();
 const app=express();
@@ -25,7 +26,7 @@ app.use(express.json());
 
 app.use("/api/user",userRoutes);
 app.use("/api/chat",chatRoutes);
-
+app.use("/api/message",messageRoutes);
 
 app.get("/",(req,res)=>{
     res.send("API IS RUNNING")

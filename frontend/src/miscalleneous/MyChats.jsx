@@ -21,7 +21,7 @@ const MyChats = ({fetchAgain}) => {
         config
       );
 
-      console.log(data);
+      // console.log(data);
       setChats(data);
     } catch (err) {
       console.error("Error fetching chats:", err);
@@ -31,7 +31,7 @@ const MyChats = ({fetchAgain}) => {
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("userInfo"));
     setLoggedUser(storedUser);
-    console.log("Stored userInfo:", storedUser);
+    // console.log("Stored userInfo:", storedUser);
     fetchChats();                     
   }, [fetchAgain]);
 

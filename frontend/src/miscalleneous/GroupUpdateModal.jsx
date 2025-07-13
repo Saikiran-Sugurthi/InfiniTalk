@@ -102,15 +102,18 @@ export default function GroupUpdateModal({fetchAgain,setFetchAgain}) {
 
   const handleGroupAdd=async (user1)=>{
 
+   
         if(selectedChat.users.find((u)=>u._id===user1._id)){
             showToast("User Already Exists in the Group !!!","error");
             return;
         }
 
-       if(selectedChat.groupAdmin._id!==user._id){
+         if(selectedChat.groupAdmin._id!==user._id){
         showToast("Only Admin Can Add Users !!!","error");
         return;
        }
+
+       
 
        try {
         setLoading(true);

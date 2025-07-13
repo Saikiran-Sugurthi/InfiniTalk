@@ -15,10 +15,10 @@ export default function Chats() {
       {user && <SideDrawer />}
       {user && <Drawer />}
 
-      <div className="flex w-full h-[91vh] p-4 gap-4">
+      <div className="flex w-full h-screen flex-1 p-4 gap-4">
         
-        {user && <div className="w-1/3"><MyChats fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} /></div>}
-        {user && <div className="w-2/3"><ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} /></div>}
+        {user && <div className="w-1/3 h-full overflow-hidden"><MyChats fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} /></div>}
+        {user && <div className="w-2/3 h-full overflow-hidden"><ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} /></div>}
       </div>
     </div>
   );
