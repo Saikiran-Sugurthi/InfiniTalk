@@ -4,6 +4,8 @@ import { getSender, getSenderFull } from "../src/config/ChatLogics";
 import ProfileModal from "../src/miscalleneous/ProfileModal";
 import GroupUpdateModal from "../src/miscalleneous/GroupUpdateModal";
 import CircularProgress from '@mui/material/CircularProgress';
+import ScrollableChat from "../components/ScrollableChat"
+
 
 import axios from "axios";
 import { useToast } from "./ToastContext";
@@ -74,8 +76,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         },config);
         
         console.log(data)
+        
 
-        setMessages([...messages,newMessage])
+        setMessages([...messages,data])
 
       } catch (error) {
         showToast(error.message,"error");
@@ -113,7 +116,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
           {/* Chat Body (Messages Area) */}
           <div className="flex-1 p-4 bg-[#E8E8E8] overflow-y-auto">
-            {loading? <CircularProgress size={60} className="text-blue-500"/>:(<div></div>)}
+            {loading? <CircularProgress size={60} className="text-blue-500"/>:(<div className="messages">
+              <ScrollableChat messages={messages}/>
+
+            </div>)}
           </div>
 
           {/* Chat Input (at the bottom) */}
