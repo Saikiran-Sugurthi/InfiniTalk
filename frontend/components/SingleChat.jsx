@@ -10,6 +10,8 @@ import axios from "axios";
 import { useToast } from "./ToastContext";
 import { formControlClasses } from "@mui/material";
 
+
+
 const ENDPOINT="http://localhost:3000";
 var socket,selectedChatCompare;
 
@@ -19,13 +21,43 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [newMessage, setNewMessage] = useState("");
   const [loading,setLoading]=useState(false);
   const [socketConnected,setSocketConnected]=useState(false);
+  const [typing,setTyping]=useState(false);
+  const [isTyping,setIsTyping]=useState(false);
+
 
   const showToast=useToast();
+
 
   const typingHandler=(e)=>{
     setNewMessage(e.target.value);
 
     //typing effect logic
+
+    if(!socketConnected) return;
+
+    if(!typing){
+      setTyping("true");
+      socket.emit("typing",selectedChat._id);
+
+    }
+
+    var lastTypingTime=new Date().getTime();
+
+    var timerLength=1000;
+
+    setTimeout(()=>{
+      var timeNow=new Date().getTime();
+
+      var timeDiff=timeNow-lastTypingTime;
+
+      if(timeDiff>=timerLength && typing){
+        socket.emit("stop typing",selectedChat._id);
+        setTyping(false);
+      }
+
+
+    },timerLength);
+
 
   }
 
@@ -69,6 +101,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     socket = io(ENDPOINT);
     socket.emit("setup", user);
     socket.on("connected",()=>setSocketConnected(true))
+    socket.on("typing",()=>setIsTyping(true));
+    socket.on("stop typing",()=>setIsTyping(false));
   }
 
   return () => {
@@ -77,24 +111,27 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     }
   };
 }, []);
+useEffect(() => {
+  // if (!socket) return;
 
-useEffect(()=>{
-  socket.on("message recieved",(newMessageRecieved)=>{
-    
-    if(!selectedChatCompare || selectedChat._id!==newMessageRecieved.chat._id){
-      //give notification
-    }else{
-      setMessages([...messages,newMessageRecieved])
+  socket.on("message recieved", (newMessageRecieved) => {
+    if (!selectedChatCompare || selectedChatCompare._id !== newMessageRecieved.chat._id) {
+      // show notification
+    } else {
+      setMessages(prevMessages => [...prevMessages, newMessageRecieved]);
     }
+  });
 
-  })
-})
+  // return () => {
+  //   socket.off("message recieved");
+  // };
+},[] );
 
 
   const sendMessage=async(event)=>{
 
     if(event.key=="Enter" && newMessage ){
-
+      socket.emit("stop typing",selectedChat._id);
       try {
         
         const config={
@@ -152,10 +189,12 @@ useEffect(()=>{
           {/* Chat Body (Messages Area) */}
           <div className="flex-1 p-4 bg-[#E8E8E8] overflow-y-auto">
             {loading? <CircularProgress size={60} className="text-blue-500"/>:(<div className="messages">
-              <ScrollableChat messages={messages}/>
-
+              <ScrollableChat messages={messages} isTyping={isTyping}/>
+            
             </div>)}
+             
           </div>
+         
 
           {/* Chat Input (at the bottom) */}
           <div className="px-4 py-2 border-t bg-white">

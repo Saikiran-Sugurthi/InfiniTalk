@@ -7,9 +7,19 @@ import {
   isSameUser,
 } from '../src/config/ChatLogics';
 import { ChatState } from '../src/context/ChatProvider';
-
-const ScrollableChat = ({ messages }) => {
+import Lottie from 'react-lottie'
+import animationData from "../src/animations/typing.json"
+const ScrollableChat = ({ messages,isTyping }) => {
   const { user } = ChatState();
+  
+   const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
 
   return (
     <ScrollToBottom className="h-full overflow-y-auto px-4 py-2">
@@ -50,6 +60,28 @@ const ScrollableChat = ({ messages }) => {
             </div>
           ) : null
         )}
+{isTyping && (
+  <div className="flex items-center mt-2 ml-3 ">
+    <div
+      style={{
+        backgroundColor: "#e2e8f0", // Light gray-blue bubble
+        borderRadius: "20px",
+        padding: "4px 10px",
+        maxWidth: "100px",
+        display: "inline-block",
+      }}
+    >
+      <Lottie
+        options={defaultOptions}
+        height={25}
+        width={50}
+        style={{
+          margin: 0,
+        }}
+      />
+    </div>
+  </div>
+)}
     </ScrollToBottom>
   );
 };
