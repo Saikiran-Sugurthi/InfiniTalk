@@ -18,6 +18,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [messages,setMessages]=useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading,setLoading]=useState(false);
+  const [socketConnected,setSocketConnected]=useState(false);
 
   const showToast=useToast();
 
@@ -46,7 +47,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         setMessages(data);
         console.log(data);
         setLoading(false);
-
+        
+        socket.emit("join chat",selectedChat._id);
 
       } catch (error) {
         setLoading(false);
@@ -58,6 +60,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
     useEffect(()=>{
       fetchMessages()
+      selectedChatCompare=selectedChat;
     },[selectedChat]);
 
 
@@ -65,6 +68,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   if (!socket) {
     socket = io(ENDPOINT);
     socket.emit("setup", user);
+    socket.on("connected",()=>setSocketConnected(true))
   }
 
   return () => {
@@ -73,6 +77,18 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     }
   };
 }, []);
+
+useEffect(()=>{
+  socket.on("message recieved",(newMessageRecieved)=>{
+    
+    if(!selectedChatCompare || selectedChat._id!==newMessageRecieved.chat._id){
+      //give notification
+    }else{
+      setMessages([...messages,newMessageRecieved])
+    }
+
+  })
+})
 
 
   const sendMessage=async(event)=>{
@@ -97,6 +113,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         
 
         setMessages([...messages,data])
+        socket.emit("new message",data);
 
       } catch (error) {
         showToast(error.message,"error");
