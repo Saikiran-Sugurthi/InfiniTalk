@@ -5,10 +5,14 @@ import ProfileModal from "../src/miscalleneous/ProfileModal";
 import GroupUpdateModal from "../src/miscalleneous/GroupUpdateModal";
 import CircularProgress from '@mui/material/CircularProgress';
 import ScrollableChat from "../components/ScrollableChat"
-
-
+import {io} from 'socket.io-client';
 import axios from "axios";
 import { useToast } from "./ToastContext";
+import { formControlClasses } from "@mui/material";
+
+const ENDPOINT="http://localhost:3000";
+var socket,selectedChatCompare;
+
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const { user, selectedChat, setSelectedChat } = ChatState();
   const [messages,setMessages]=useState([]);
@@ -55,6 +59,20 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     useEffect(()=>{
       fetchMessages()
     },[selectedChat]);
+
+
+  useEffect(() => {
+  if (!socket) {
+    socket = io(ENDPOINT);
+    socket.emit("setup", user);
+  }
+
+  return () => {
+    if (socket) {
+      socket.disconnect();
+    }
+  };
+}, []);
 
 
   const sendMessage=async(event)=>{

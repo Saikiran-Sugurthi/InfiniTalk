@@ -13,7 +13,8 @@ const connectToDB =require("./config/db.js");
 const { errorHandler, notFound } = require("./middlewares/errorMiddleWare.js");
 const chatRoutes=require("./routes/chatRoutes.js")
 const PORT=process.env.PORT || 3000;
-const messageRoutes=require("./routes/messageRoutes.js")
+const messageRoutes=require("./routes/messageRoutes.js");
+const { Socket } = require("socket.io");
 
 connectToDB();
 const app=express();
@@ -50,4 +51,16 @@ app.use(errorHandler)
 
 // console.log("PORT from .env:", process.env.PORT);
 
-app.listen(PORT,console.log("SERVER LISTENING ON PORT 3000"));
+const server=app.listen(PORT,console.log("SERVER LISTENING ON PORT 3000"));
+
+const io=require("socket.io")(server,{
+    pingTimeOut:60000,
+    cors:{
+        origin:"http://localhost:5173"
+    }
+})
+
+
+io.on("connection",(socket)=>{
+    console.log("Connected to Socket.io");
+})
