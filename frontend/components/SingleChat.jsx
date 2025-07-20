@@ -9,6 +9,9 @@ import {io} from 'socket.io-client';
 import axios from "axios";
 import { useToast } from "./ToastContext";
 import { formControlClasses } from "@mui/material";
+import { useRef } from "react";
+
+
 
 
 
@@ -16,7 +19,7 @@ const ENDPOINT="http://localhost:3000";
 var socket,selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
-  const { user, selectedChat, setSelectedChat } = ChatState();
+  const { user, selectedChat, setSelectedChat,notifications,setNotifications } = ChatState();
   const [messages,setMessages]=useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading,setLoading]=useState(false);
@@ -24,6 +27,20 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [typing,setTyping]=useState(false);
   const [isTyping,setIsTyping]=useState(false);
 
+
+  
+const messagesEndRef = useRef(null);
+
+useEffect(() => {
+  scrollToBottom();
+}, [messages, selectedChat]);
+
+
+
+
+const scrollToBottom = () => {
+  messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+};
 
   const showToast=useToast();
 
@@ -92,6 +109,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
     useEffect(()=>{
       fetchMessages()
+
+      setNotifications(()=>
+        notifications.filter((n)=>(n.chat._id!==selectedChat._id))
+      )
+
       selectedChatCompare=selectedChat;
     },[selectedChat]);
 
@@ -111,12 +133,25 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     }
   };
 }, []);
+
+
 useEffect(() => {
   // if (!socket) return;
 
   socket.on("message recieved", (newMessageRecieved) => {
     if (!selectedChatCompare || selectedChatCompare._id !== newMessageRecieved.chat._id) {
-      // show notification
+        //Notification
+        if(!notifications.includes(newMessageRecieved)){
+           setNotifications(prev=>{
+          const updated=[newMessageRecieved,...prev]
+            
+        console.log(updated,"----------")
+        return updated;
+        });
+        }
+         setFetchAgain(!fetchAgain);
+      
+
     } else {
       setMessages(prevMessages => [...prevMessages, newMessageRecieved]);
     }
@@ -126,6 +161,7 @@ useEffect(() => {
   //   socket.off("message recieved");
   // };
 },[] );
+  
 
 
   const sendMessage=async(event)=>{
@@ -192,7 +228,7 @@ useEffect(() => {
               <ScrollableChat messages={messages} isTyping={isTyping}/>
             
             </div>)}
-             
+              <div ref={messagesEndRef} />
           </div>
          
 
