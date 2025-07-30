@@ -106,21 +106,25 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     };
   }, []);
 
-  useEffect(() => {
-    socket.on("message recieved", (newMessageRecieved) => {
-      if (
-        !selectedChatCompare ||
-        selectedChatCompare._id !== newMessageRecieved.chat._id
-      ) {
-        if (!notifications.includes(newMessageRecieved)) {
-          setNotifications((prev) => [newMessageRecieved, ...prev]);
-          setFetchAgain(!fetchAgain);
-        }
-      } else {
-        setMessages((prev) => [...prev, newMessageRecieved]);
+ useEffect(() => {
+  socket.on("message received", (newMessageRecieved) => {  // ✅ fixed spelling
+    if (
+      !selectedChatCompare ||
+      selectedChatCompare._id !== newMessageRecieved.chat._id
+    ) {
+      if (!notifications.includes(newMessageRecieved)) {
+        setNotifications((prev) => [newMessageRecieved, ...prev]);
+        setFetchAgain(!fetchAgain);
       }
-    });
-  }, []);
+    } else {
+      setMessages((prev) => [...prev, newMessageRecieved]);
+    }
+  });
+
+  return () => {
+    socket.off("message received");  // ✅ Cleanup added
+  };
+}, [selectedChatCompare, notifications]);  // ✅ include deps
 
   const sendMessage = async (event) => {
     if ((event.key === "Enter" || event.type === "click") && newMessage) {
@@ -159,7 +163,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     onClick={() => setSelectedChat(null)}
                     className="  md:hidden z-10  text-white  py-1 rounded"
                   >
-                    <i class="fa-solid fa-arrow-left"></i>
+                    <i className="fa-solid fa-arrow-left"></i>
                   </button>
 
                   <Avatar src={getSenderFull(user, selectedChat.users)?.pic} />
