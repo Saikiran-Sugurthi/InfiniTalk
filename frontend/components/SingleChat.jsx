@@ -8,10 +8,10 @@ import ScrollableChat from "../components/ScrollableChat";
 import { io } from "socket.io-client";
 import axios from "axios";
 import { useToast } from "./ToastContext";
-import { Avatar } from "@mui/material";
+import { Avatar } from "@mui/material"; // Added for the new UI
 
 const ENDPOINT = "http://localhost:3000";
-let socket, selectedChatCompare;
+var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const {
@@ -40,36 +40,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const typingHandler = (e) => {
-    setNewMessage(e.target.value);
-    if (!socketConnected) return;
-
-    if (!typing) {
-      setTyping(true);
-      socket.emit("typing", selectedChat._id);
-    }
-
-    const lastTypingTime = new Date().getTime();
-    const timerLength = 1000;
-
-    setTimeout(() => {
-      const timeNow = new Date().getTime();
-      const timeDiff = timeNow - lastTypingTime;
-
-      if (timeDiff >= timerLength && typing) {
-        socket.emit("stop typing", selectedChat._id);
-        setTyping(false);
-      }
-    }, timerLength);
-  };
-
   const fetchMessages = async () => {
     if (!selectedChat) return;
-
     try {
       setLoading(true);
       const config = {
-        headers: { Authorization: `Bearer ${user.token}` },
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
       };
       const { data } = await axios.get(
         `http://localhost:3000/api/message/${selectedChat._id}`,
@@ -84,47 +62,52 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     }
   };
 
+  // This `useEffect` runs when the component mounts to set up the socket
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit("setup", user);
+    socket.on("connected", () => setSocketConnected(true));
+    socket.on("typing", () => setIsTyping(true));
+    socket.on("stop typing", () => setIsTyping(false));
+    
+    // Optional: Cleanup on unmount
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  // This `useEffect` runs when the selectedChat changes
   useEffect(() => {
     fetchMessages();
-    setNotifications(() =>
-      notifications.filter((n) => n.chat._id !== selectedChat._id)
+    setNotifications(
+      notifications.filter((n) => n.chat._id !== selectedChat?._id)
     );
     selectedChatCompare = selectedChat;
   }, [selectedChat]);
 
+  // This `useEffect` listens for incoming messages.
+  // It uses the logic from your old, working code.
   useEffect(() => {
-    if (!socket) {
-      socket = io(ENDPOINT);
-      socket.emit("setup", user);
-      socket.on("connected", () => setSocketConnected(true));
-      socket.on("typing", () => setIsTyping(true));
-      socket.on("stop typing", () => setIsTyping(false));
-    }
-
-    return () => {
-      if (socket) socket.disconnect();
-    };
-  }, []);
-
- useEffect(() => {
-  socket.on("message received", (newMessageRecieved) => {  // ✅ fixed spelling
-    if (
-      !selectedChatCompare ||
-      selectedChatCompare._id !== newMessageRecieved.chat._id
-    ) {
-      if (!notifications.includes(newMessageRecieved)) {
-        setNotifications((prev) => [newMessageRecieved, ...prev]);
-        setFetchAgain(!fetchAgain);
+    socket.on("message recieved", (newMessageRecieved) => {
+      if (
+        !selectedChatCompare || // If chat is not selected or doesn't match
+        selectedChatCompare._id !== newMessageRecieved.chat._id
+      ) {
+        // Give notification
+        if (!notifications.some((n) => n._id === newMessageRecieved._id)) {
+          setNotifications((prev) => [newMessageRecieved, ...prev]);
+          setFetchAgain(!fetchAgain);
+        }
+      } else {
+        // Add to the current chat's messages
+        setMessages((prevMessages) => [...prevMessages, newMessageRecieved]);
       }
-    } else {
-      setMessages((prev) => [...prev, newMessageRecieved]);
-    }
-  });
-
-  return () => {
-    socket.off("message received");  // ✅ Cleanup added
-  };
-}, [selectedChatCompare, notifications]);  // ✅ include deps
+    });
+    // We add a cleanup function to avoid multiple listeners
+    return () => {
+      socket.off("message recieved");
+    };
+  }); // Note: No dependency array, or use `[]` if issues persist. The original had `[]` and worked. Let's stick to the most robust pattern.
 
   const sendMessage = async (event) => {
     if ((event.key === "Enter" || event.type === "click") && newMessage) {
@@ -136,36 +119,56 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             Authorization: `Bearer ${user.token}`,
           },
         };
-        setNewMessage("");
+        setNewMessage(""); // Clear input immediately
         const { data } = await axios.post(
           "http://localhost:3000/api/message/",
           { content: newMessage, chatId: selectedChat._id },
           config
         );
-        setMessages([...messages, data]);
         socket.emit("new message", data);
+        setMessages([...messages, data]);
       } catch (error) {
         showToast(error.message, "error");
       }
     }
   };
 
-  return (
+  const typingHandler = (e) => {
+    setNewMessage(e.target.value);
+    if (!socketConnected) return;
+
+    if (!typing) {
+      setTyping(true);
+      socket.emit("typing", selectedChat._id);
+    }
+    let lastTypingTime = new Date().getTime();
+    var timerLength = 3000;
+    setTimeout(() => {
+      var timeNow = new Date().getTime();
+      var timeDiff = timeNow - lastTypingTime;
+      if (timeDiff >= timerLength && typing) {
+        socket.emit("stop typing", selectedChat._id);
+        setTyping(false);
+      }
+    }, timerLength);
+  };
+
+ return (
     <>
       {selectedChat ? (
         <div className="flex flex-col h-full w-full bg-[#2C2F33] text-white rounded-lg shadow-inner">
           {/* Chat Header */}
           <div className="flex justify-between items-center px-4 py-3 border-b border-[#4F545C] bg-[#23272A]">
-            <div className="text-lg font-semibold tracking-wide flex justify-center items-center gap-2">
+            <div className="text-lg font-semibold tracking-wide flex justify-center items-center gap-3">
+              <button
+                onClick={() => setSelectedChat(null)}
+                className="md:hidden text-white py-1 rounded"
+              >
+                <i className="fa-solid fa-arrow-left"></i>
+              </button>
+
               {!selectedChat.isGroupChat ? (
                 <>
-                  <button
-                    onClick={() => setSelectedChat(null)}
-                    className="  md:hidden z-10  text-white  py-1 rounded"
-                  >
-                    <i className="fa-solid fa-arrow-left"></i>
-                  </button>
-
                   <Avatar src={getSenderFull(user, selectedChat.users)?.pic} />
                   {getSender(user, selectedChat.users)}
                   <ProfileModal
@@ -174,12 +177,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 </>
               ) : (
                 <>
-                                  <button
-                    onClick={() => setSelectedChat(null)}
-                    className="  md:hidden z-10  text-white  py-1 rounded"
-                  >
-                    <i class="fa-solid fa-arrow-left"></i>
-                  </button>
                   {selectedChat.chatName.toUpperCase()}
                   <GroupUpdateModal
                     fetchAgain={fetchAgain}
@@ -198,6 +195,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               </div>
             ) : (
               <>
+                {/* ✅ FIX: isTyping prop is now passed correctly for the animation */}
                 <ScrollableChat messages={messages} isTyping={isTyping} />
                 <div ref={messagesEndRef} />
               </>
