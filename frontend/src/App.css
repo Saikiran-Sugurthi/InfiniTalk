@@ -1,23 +1,20 @@
 @import "tailwindcss";
 
 .App{
-    background-image: url("E:\InfiniTalk\frontend\assets\background_grid.png"); 
+    /* background-image: url("E:\InfiniTalk\frontend\assets\background_grid.png");  */
+/*     
     background-size: cover;
-    background-position: center; 
+    background-position: center;  */
     /* background-color: #6c51ab; */
-    color: rgb(12, 12, 12);
+    color: #F2F3F5;
+    background-color: #2B2D31;
 
 }
-
-::-webkit-scrollbar{
-    width: 0px;
+/* global.css or tailwind base */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
 }
-
-::-webkit-scrollbar-thumb{
-    background: rgba(136,136,136,0.281);
-
-}
-
-::-webkit-scrollbar-thumb:hover{
-    background: #555
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #40444B;
+  border-radius: 3px;
 }

@@ -10,8 +10,8 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 350,
-  bgcolor: '#fff',
-  borderRadius: '8px',
+  bgcolor: '#2C2F33', // Discord-like dark background
+  borderRadius: '12px',
   boxShadow: 24,
   padding: '24px',
   display: 'flex',
@@ -32,7 +32,6 @@ export default function ProfileModal({ user, children }) {
 
   return (
     <>
-      
       {children ? (
         React.cloneElement(children, {
           onClick: handleOpen,
@@ -54,14 +53,19 @@ export default function ProfileModal({ user, children }) {
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
           <Avatar
-            src={user.image}
+            src={user.pic}
             alt={user.name}
-            sx={{ width: 100, height: 100 }}
+            sx={{
+              width: 100,
+              height: 100,
+              border: '2px solid #7289DA', // Discord accent color
+              boxShadow: '0 0 10px #7289DA55',
+            }}
           />
-          <Typography variant="h6" fontWeight="bold">
+          <Typography variant="h6" fontWeight="bold" sx={{ color: '#FFFFFF' }}>
             {user.name}
           </Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body1" sx={{ color: '#B9BBBE' }}>
             Email: {user.email}
           </Typography>
         </Box>

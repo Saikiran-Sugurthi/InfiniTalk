@@ -193,86 +193,89 @@ export default function GroupUpdateModal({fetchAgain,setFetchAgain}) {
 
       
       {open && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-gray-100/50">
-          <div className="bg-white rounded-md shadow-md p-4 w-[90%] max-w-sm relative">
+  <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60">
+    <div className="bg-[#23272a] text-white rounded-xl shadow-xl p-6 w-[90%] max-w-md relative">
 
-            
-            <button
-              onClick={handleClose}
-              className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
-            >
-              <i className="fa-solid fa-xmark" />
-            </button>
+      {/* Close button */}
+      <button
+        onClick={handleClose}
+        className="absolute top-3 right-3 text-gray-400 hover:text-white text-lg"
+      >
+        <i className="fa-solid fa-xmark" />
+      </button>
 
-           
-            <h2 className="text-lg font-medium text-center mb-3">Update Group</h2>
+      {/* Header */}
+      <h2 className="text-xl font-semibold text-center mb-4">Update Group</h2>
 
-            
-            <div className="flex flex-wrap gap-2 mb-4">
-              {selectedChat.users.map((u) => (
-                <UserBadgeItem
-                  key={u._id}
-                  handleFunction={() => handleRemove(u)}
-                  user={u}
-                />
-              ))}
-            </div>
+      {/* Selected Users */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        {selectedChat.users.map((u) => (
+          <UserBadgeItem
+            key={u._id}
+            handleFunction={() => handleRemove(u)}
+            user={u}
+          />
+        ))}
+      </div>
 
-          
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleRename();
-              }}
-              className="flex gap-2 mb-3"
-            >
-              <input
-                type="text"
-                value={groupName}
-                onChange={(e) => setGroupName(e.target.value)}
-                placeholder="Rename group"
-                className="flex-1 border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200"
-              />
-              <button
-                type="submit"
-                className="bg-blue-500 text-white text-sm px-3 py-1 rounded hover:bg-blue-600"
-              >
-                Update
-              </button>
-            </form>
+      {/* Rename Group */}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleRename();
+        }}
+        className="flex gap-2 mb-4"
+      >
+        <input
+          type="text"
+          value={groupName}
+          onChange={(e) => setGroupName(e.target.value)}
+          placeholder="Rename group"
+          className="flex-1 bg-[#2c2f33] border border-gray-600 text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-[#5865f2]"
+        />
+        <button
+          type="submit"
+          className="bg-[#5865f2] hover:bg-[#4752c4] text-white text-sm px-4 py-2 rounded"
+        >
+          Update
+        </button>
+      </form>
 
-           
-            <form onSubmit={(e) => e.preventDefault()} className="flex gap-2 mb-2">
-              <input
-                type="text"
-                placeholder="Add users"
-                onChange={(e)=>handleSearch(e.target.value)}
-                className="flex-1 border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring focus:ring-green-200"
-              />
-              {/* <button
-                type="submit"
-                
-                className="bg-green-500 text-white text-sm px-3 py-1 rounded hover:bg-green-600"
-              >
-                Add
-              </button> */}
-            </form>
+      {/* Search Users */}
+      <form onSubmit={(e) => e.preventDefault()} className="flex gap-2 mb-4">
+        <input
+          type="text"
+          placeholder="Add users"
+          onChange={(e) => handleSearch(e.target.value)}
+          className="flex-1 bg-[#2c2f33] border border-gray-600 text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-green-400"
+        />
+      </form>
 
-            {loading?(<div className='text-xs'>Loading...</div>):searchResults.slice(0,4).map((u)=>(
-                <UserListItem key={u._id} user={u} handleFunction={()=>handleGroupAdd(u)} />
-            ))}
-                <button
-                type="submit" onClick={()=>handleRemove(user)}
-                
-                className="mt-4 bg-red-500 text-white text-sm px-3 py-1 rounded hover:bg-red-600"
-              >
-                Leave Group
-              </button>
-            
-
-          </div>
-        </div>
+      {/* Search Results */}
+      {loading ? (
+        <div className="text-sm text-gray-300">Loading...</div>
+      ) : (
+        searchResults.slice(0, 4).map((u) => (
+          <UserListItem
+            key={u._id}
+            user={u}
+            handleFunction={() => handleGroupAdd(u)}
+          />
+        ))
       )}
+
+      {/* Leave Group Button */}
+      <button
+        type="button"
+        onClick={() => handleRemove(user)}
+        className="mt-5 bg-red-600 hover:bg-red-700 text-white text-sm px-4 py-2 rounded w-full"
+      >
+        Leave Group
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

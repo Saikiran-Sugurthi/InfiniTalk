@@ -33,7 +33,8 @@ const registerUser=asynchandler(async(req,res)=>{
             _id:user._id,
             name:user.name,
             email:user.email,
-            password:user.password,
+             pic: user.pic,
+           
             token:generateToken(user._id)
         })
     }
@@ -58,7 +59,7 @@ const authUser=asynchandler(async(req,res)=>{
                 _id:user._id,
                 name:user.name,
                 email:user.email,
-               
+                 pic: user.pic,
                 token:generateToken(user._id)
             })
         }

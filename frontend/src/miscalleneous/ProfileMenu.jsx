@@ -34,7 +34,7 @@ const {user}=ChatState();
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-         <Avatar alt={user.name} src={user.image} />
+         <Avatar alt={user.name} src={user.pic} />
          <i className="fa-solid fa-chevron-down"></i>
       </Button>
       <Menu

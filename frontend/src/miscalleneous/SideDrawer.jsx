@@ -1,6 +1,5 @@
 import React from 'react';
 import Tooltip from '@mui/material/Tooltip';
-import Button from '@mui/material/Button';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import NotificationMenu from './NotificationMenu';
 import ProfileMenu from './ProfileMenu';
@@ -10,24 +9,24 @@ const SideDrawer = () => {
   const { toggleDrawer } = useDrawer();
 
   return (
-    <div className="flex justify-between items-center bg-gray-100 px-4 py-2 shadow-sm rounded-md">
+    <div className="flex justify-between items-center bg-[#2f3136] px-4 py-3 shadow-sm rounded-md border border-[#202225]">
       
-   <Tooltip title="Search User">
-  <button
-    onClick={() => toggleDrawer(true)}
-    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-800 bg-slate-100 border border-slate-300 rounded-md hover:bg-slate-200 transition-colors duration-200"
-  >
-    <SearchOutlinedIcon fontSize="small" />
-    Search User
-  </button>
-</Tooltip>
-
+      {/* Left: Search Button */}
+      <Tooltip title="Search User" arrow>
+        <button
+          onClick={() => toggleDrawer(true)}
+          className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-[#40444b] border border-[#202225] rounded-md hover:bg-[#4f545c] transition-colors duration-200"
+        >
+          <SearchOutlinedIcon fontSize="small" className="text-white" />
+          Search
+        </button>
+      </Tooltip>
 
       {/* Center: App Name */}
-      <h1 className="text-lg font-bold tracking-wide text-gray-800">InfiniTalk</h1>
+      <h1 className="text-lg font-bold tracking-wide text-white">InfiniTalk</h1>
 
       {/* Right: Notification & Profile */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <NotificationMenu />
         <ProfileMenu />
       </div>

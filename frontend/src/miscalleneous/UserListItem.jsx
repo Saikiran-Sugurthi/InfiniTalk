@@ -5,17 +5,17 @@ const UserListItem = ({ handleFunction, user }) => {
   return (
     <div
       onClick={handleFunction}
-      className="flex items-center gap-3 bg-gray-200 p-3 mb-2 rounded-md hover:bg-blue-300 cursor-pointer transition"
+      className="flex items-center gap-4 bg-[#F3F4F6] p-3 rounded-lg mb-2 hover:bg-[#BFDBFE] transition-all duration-200 cursor-pointer shadow-sm"
     >
       <Avatar
         alt={user.name}
-        src={user.image}
-        className="w-10 h-10"
+        src={user.pic}
+        sx={{ width: 40, height: 40 }}
       />
 
       <div className="flex flex-col">
-        <span className="font-medium text-sm text-gray-800">{user.name}</span>
-        <span className="text-xs text-gray-600">E-mail: {user.email}</span>
+        <span className="text-sm font-semibold text-gray-800">{user.name}</span>
+        <span className="text-xs text-gray-600">Email: {user.email}</span>
       </div>
     </div>
   );

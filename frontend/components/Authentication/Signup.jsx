@@ -1,13 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AppName from "../AppName";
-import { useToast } from "../ToastContext"
+import { useToast } from "../ToastContext";
 import LoadingButton from '@mui/lab/LoadingButton';
-import { useEffect } from "react";
 import axios from "axios";
-import Button from '@mui/material/Button'
 import { useNavigate } from "react-router-dom";
-
-
 
 export default function SignUp() {
   const [name, setName] = useState("");
@@ -15,171 +11,158 @@ export default function SignUp() {
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
   const [pic, setPic] = useState("");
-   const { showToast } = useToast();
-   const [loading,setLoading]=useState(false)
+  const { showToast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-   const navigate = useNavigate();
+  useEffect(() => {
+    if (pic) {
+      console.log("Cloudinary Image URL:", pic);
+    }
+  }, [pic]);
 
-useEffect(() => {
-  if (pic) {
-    console.log("Cloudinary Image URL:", pic);
-  }
-}, [pic]);
-
-  const submitHandler=async()=>{
+  const submitHandler = async () => {
     setLoading(true);
-    if(!name || !email || !password ){
-      showToast("Please Fill All The Details !!!","warning");
+    if (!name || !email || !password) {
+      showToast("Please fill all the details!", "warning");
       setLoading(false);
       return;
     }
 
-    if(password!=confirmpassword){
-      showToast("Passowrds Doesnot Match !!!","warning");
+    if (password !== confirmpassword) {
+      showToast("Passwords do not match!", "warning");
       setLoading(false);
       return;
     }
 
-    try{
-      const config={
-        headers:{
-          "Content-type":"application/json"
-        },
-      }
-      console.log("Submitting:", { name, email, password, pic });
-      const {data}=  await axios.post("http://localhost:3000/api/user",{name,email,password,pic},config);
-      showToast("Registration Successfull","success");
-
-      localStorage.setItem("userInfo",JSON.stringify(data));
+    try {
+      const config = {
+        headers: { "Content-type": "application/json" },
+      };
+      const { data } = await axios.post(
+        "http://localhost:3000/api/user",
+        { name, email, password, pic },
+        config
+      );
+      showToast("Registration Successful", "success");
+      localStorage.setItem("userInfo", JSON.stringify(data));
       navigate("/chats");
+    } catch (err) {
+      showToast(err.response?.data?.message || "Something went wrong!", "error");
+    } finally {
+      setLoading(false);
     }
-    catch(err){
-       console.log("ERROR RESPONSE", err.response?.data);
-  showToast(err.response?.data?.message || "Error Occured !!!", "error");
-  setLoading(false);
-    }
-     finally {
-    setLoading(false);
-  }
+  };
 
-
-
-
-
-  }
-
-  const postDetails=(pics)=>{
+  const postDetails = (pics) => {
     setLoading(true);
-    if(pics==undefined){
-      showToast("Please Select an Image","warning");
-       setLoading(false); 
+    if (!pics) {
+      showToast("Please select an image", "warning");
+      setLoading(false);
       return;
     }
+
     if (pics.type === "image/jpeg" || pics.type === "image/png") {
-    const data = new FormData();
-    data.append("file", pics);
-    data.append("upload_preset", "InfiniTalk");
-    data.append("cloud_name", "dlm4qnn7s"); 
+      const data = new FormData();
+      data.append("file", pics);
+      data.append("upload_preset", "InfiniTalk");
+      data.append("cloud_name", "dlm4qnn7s");
 
-    fetch("https://api.cloudinary.com/v1_1/dlm4qnn7s/image/upload", {
-      method: "POST",
-      body: data,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        
-       console.log("Full Cloudinary Response:", data);
-  setPic(data.url.toString());
-  showToast("Image uploaded successfully", "success");
-  setLoading(false); 
+      fetch("https://api.cloudinary.com/v1_1/dlm4qnn7s/image/upload", {
+        method: "POST",
+        body: data,
       })
-      .catch((err) => {
-        console.error(err);
-        showToast("Upload failed", "error");
-        setLoading(false); 
-      });
-  } else {
-    showToast("Please Select a JPEG or PNG image", "warning");
-    setLoading(false);
-    return;
-  }
-
-  }
+        .then((res) => res.json())
+        .then((data) => {
+          setPic(data.url.toString());
+          showToast("Image uploaded successfully", "success");
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          showToast("Image upload failed", "error");
+          setLoading(false);
+        });
+    } else {
+      showToast("Only JPEG or PNG allowed", "warning");
+      setLoading(false);
+    }
+  };
 
   return (
-   <div className="min-h-screen flex flex-col items-center justify-center ">
-   <AppName/>
-    
-      <form className="p-6 rounded w-full max-w-md space-y-4 mt-4 shadow-md  text-black" style={{ backgroundColor: "#e6ecff" }}>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#2b2d31] px-4">
+      <AppName />
+
+      <form
+        onSubmit={(e) => e.preventDefault()}
+        className="bg-[#23272a] text-white p-6 rounded-lg shadow-lg w-full max-w-md space-y-5 mt-6"
+      >
         <div className="flex flex-col">
-          <label htmlFor="signupName" className="text-black font-medium mb-2">Name</label>
+          <label className="text-sm font-medium mb-1">Name</label>
           <input
-            id="signupName"
             type="text"
             placeholder="Enter your name"
-            className="p-2 rounded text-black border border-black"
+            className="p-2 bg-[#2c2f33] border border-[#4f545c] rounded focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="signupEmail" className="text-black font-medium mb-2">Email</label>
+          <label className="text-sm font-medium mb-1">Email</label>
           <input
-            id="signupEmail"
             type="email"
             placeholder="Enter your email"
-            className="p-2 rounded text-black border border-black"
+            className="p-2 bg-[#2c2f33] border border-[#4f545c] rounded focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="signupPassword" className="text-black font-medium mb-2">Password</label>
+          <label className="text-sm font-medium mb-1">Password</label>
           <input
-            id="signupPassword"
             type="password"
             placeholder="Create a password"
-            className="p-2 rounded text-black border border-black"
+            className="p-2 bg-[#2c2f33] border border-[#4f545c] rounded focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="signupConfirmPassword" className="text-black font-medium mb-2">Confirm Password</label>
+          <label className="text-sm font-medium mb-1">Confirm Password</label>
           <input
-            id="signupConfirmPassword"
             type="password"
             placeholder="Confirm your password"
-            className="p-2 rounded text-black border border-black"
+            className="p-2 bg-[#2c2f33] border border-[#4f545c] rounded focus:outline-none focus:ring-2 focus:ring-[#5865f2]"
             value={confirmpassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="signupPic" className="text-black font-medium mb-2  ">Profile Picture</label>
+          <label className="text-sm font-medium mb-1">Profile Picture</label>
           <input
-            id="signupPic"
             type="file"
-           p={1.5}
-          accept="image/*"
-          onChange={(e) => postDetails(e.target.files[0])}
+            accept="image/*"
+            onChange={(e) => postDetails(e.target.files[0])}
+            className="text-sm text-gray-300 file:bg-[#5865f2] file:text-white file:rounded file:px-4 file:py-1 file:cursor-pointer"
           />
         </div>
 
-           <LoadingButton
-           loading={loading}
-           onClick={submitHandler}
-          type="submit" style={{backgroundColor:"#ff5930",color:"#fff"}}
-          className="w-full mt-4  hover:bg-blue-600 p-2 rounded text-white font-semibold "
+        <LoadingButton
+          loading={loading}
+          onClick={submitHandler}
+                      style={{
+              backgroundColor: "#5865F2",
+                          color: "#fff",}}
+
+          className="w-full  text-white py-2 rounded mt-2 font-semibold"
         >
           Sign Up
-      </LoadingButton>
+        </LoadingButton>
       </form>
     </div>
-    
   );
 }

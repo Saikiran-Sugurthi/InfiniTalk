@@ -8,9 +8,12 @@ import {
 } from '../src/config/ChatLogics';
 import { ChatState } from '../src/context/ChatProvider';
 import Lottie from 'react-lottie'
+
 import animationData from "../src/animations/typing.json"
 const ScrollableChat = ({ messages,isTyping }) => {
   const { user } = ChatState();
+
+  
   
    const defaultOptions = {
     loop: true,
@@ -45,12 +48,16 @@ const ScrollableChat = ({ messages,isTyping }) => {
               <span
                 style={{
                   backgroundColor: `${
-                    m.sender?._id === user?._id ? '#BEE3F8' : '#B9F5D0'
+                    m.sender?._id === user?._id ? '#5865F2' : '#313338'
+                  }`,
+                   color: `${
+                    m.sender?._id === user?._id ? '#FFFFFF' : '#F2F3F5'
                   }`,
                   marginLeft: isSameSenderMargin(messages, m, i, user?._id),
                   marginTop: isSameUser(messages, m, i) ? 3 : 10,
                   borderRadius: '20px',
                   padding: '5px 15px',
+                
                   maxWidth: '75%',
                   display: 'inline-block',
                 }}
@@ -64,7 +71,7 @@ const ScrollableChat = ({ messages,isTyping }) => {
   <div className="flex items-center mt-2 ml-3 ">
     <div
       style={{
-        backgroundColor: "#e2e8f0", // Light gray-blue bubble
+        backgroundColor: "#1E1F22", // Light gray-blue bubble
         borderRadius: "20px",
         padding: "4px 10px",
         maxWidth: "100px",

@@ -1,164 +1,107 @@
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
+import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import { useDrawer } from '../context/DrawerContext'; // adjust path
+import { useDrawer } from '../context/DrawerContext';
 import { useToast } from '../../components/ToastContext';
 import { ChatState } from '../context/ChatProvider';
 import ChatLoading from './ChatLoading';
-import { spacing } from '@mui/system';
 import axios from 'axios';
-
 import UserListItem from './UserListItem';
 
 export default function Drawer() {
   const { open, toggleDrawer } = useDrawer();
-    const {user,chats,setChats,setSelectedChat,setChat}=ChatState();
-  const {showToast}=useToast();
-    const [search,setSearch]=useState("");
-    const [loading,setLoading]=useState(false);
-    const [searchResults,setSearchResults]=useState([]);
-    const [loadingChat,setLoadingChat]=useState([]);
+  const { user, chats, setChats, setSelectedChat } = ChatState();
+  const { showToast } = useToast();
 
-    const accessChat=async (userId)=>{
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [loadingChat, setLoadingChat] = useState(false);
 
-        try{
-            setLoadingChat(true);
+  const accessChat = async (userId) => {
+    try {
+      setLoadingChat(true);
 
-
-            const config={
-                headers:{
-                    "Content-type":"application/json",
-                    Authorization:`Bearer ${user.token}`
-                }
-            }
-
-
-            const {data}=await axios.post("http://localhost:3000/api/chat",{userId},config);
-
-            if(!chats.find((c)=>c._id===data._id)) setChats([data,...chats]);
-
-
-            setSelectedChat(data);
-             toggleDrawer(false);
-            setLoadingChat(false);
-
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${user.token}`
         }
-        catch(err){
-                showToast("Error Fetching The Chat","warning");
-        }
+      };
 
+      const { data } = await axios.post("http://localhost:3000/api/chat", { userId }, config);
 
+      if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
 
+      setSelectedChat(data);
+      toggleDrawer(false);
+      setLoadingChat(false);
+    } catch (err) {
+      showToast("Error Fetching The Chat", "warning");
+    }
+  };
+
+  const handleSearch = async () => {
+    if (!search) {
+      showToast("Enter something to search", "warning");
+      return;
     }
 
+    try {
+      setLoading(true);
 
-   
-
-    const handleSearch=async()=>{
-        if(!search){
-            showToast("Enter Something to search","warning");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`
         }
-        else{
+      };
 
-            try{
-                 setLoading(true);
-
-            const config={
-                headers :{
-                    Authorization:`Bearer ${user.token}`
-                },
-            }
-//             console.log("User from context:", user);
-// console.log("Token being sent:", user?.token);
-
-
-            const {data}=await axios.get(`http://localhost:3000/api/user/?search=${search}`,config);
-            console.log(data);
-            setLoading(false);
-            setSearchResults(data)
-            }catch(err){
-                showToast(err.message,"error");
-            }
-           
-
-        }
+      const { data } = await axios.get(`http://localhost:3000/api/user/?search=${search}`, config);
+      setSearchResults(data);
+      setLoading(false);
+    } catch (err) {
+      showToast(err.message, "error");
     }
-
+  };
 
   const DrawerList = (
     <Box
-      sx={{ width: 250 }}
+      sx={{ width: 300 }}
+      className="bg-[#2B2D31] h-full text-white flex flex-col"
       role="presentation"
-      
     >
-      {/* <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List> */}
+      <div className="p-4">
+        <div className="flex items-center gap-2 mb-4">
+          <input
+            type="text"
+            value={search}
+            placeholder="Search by name or email"
+            onChange={(e) => setSearch(e.target.value)}
+            className="flex-grow px-3 py-2 bg-[#1E1F22] text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            onClick={handleSearch}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-sm font-semibold"
+          >
+            Go
+          </button>
+        </div>
 
-      <List>
-        <ListItem style={{gap:"5px"}}>
-            <input type='text'  style={{
-            width: '90%%',
-            padding: '8px',
-            fontSize: '14px',
-            borderRadius: '4px',
-            color:"black",
-            border: '1px solid #ccc',
-          }} value={search} placeholder='Search by name or Email' onChange={(e)=>setSearch(e.target.value)} >
-            
-            </input>
-            <button onClick={handleSearch} style={{
-    padding: '8px 16px',
-    backgroundColor: '#1976d2',      
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontWeight: 'bold',
-    fontSize: '14px',
-    transition: 'background-color 0.3s',
-  }}>Go</button>
-        </ListItem>
-      </List>
-      <Divider />
-      {/* <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List> */}
+        <Divider className="bg-gray-600 mb-4" />
 
-        {
-            loading?<ChatLoading/>:(
-                searchResults.map((user)=>(
-                    <UserListItem key={user._id} user={user} handleFunction={()=>accessChat(user._id)}/>
-                ))
-            )
-        }
-
+        <div className="overflow-y-auto max-h-[calc(100vh-150px)] pr-2 custom-scrollbar">
+          {loading ? (
+            <ChatLoading />
+          ) : (
+            searchResults.map((user) => (
+              <UserListItem key={user._id} user={user} handleFunction={() => accessChat(user._id)} />
+            ))
+          )}
+        </div>
+      </div>
     </Box>
   );
 
