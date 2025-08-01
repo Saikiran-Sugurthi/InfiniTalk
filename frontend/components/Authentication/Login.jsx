@@ -28,7 +28,7 @@ export default function Login() {
       };
 
       const { data } = await axios.post(
-        "http://localhost:3000/api/user/login",
+       `${import.meta.env.VITE_API_URL}/api/user/login`,
         { email, password },
         config
       );
@@ -57,7 +57,7 @@ export default function Login() {
       };
 
       const { data } = await axios.post(
-        "http://localhost:3000/api/user/login",
+       `${import.meta.env.VITE_API_URL}/api/user/login`,
         { email: guestemail, password: guestpassword },
         config
       );

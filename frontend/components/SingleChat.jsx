@@ -9,8 +9,7 @@ import { io } from "socket.io-client";
 import axios from "axios";
 import { useToast } from "./ToastContext";
 import { Avatar } from "@mui/material";
-
-const ENDPOINT = "http://localhost:3000";
+const ENDPOINT = import.meta.env.VITE_API_URL;
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
@@ -50,7 +49,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         },
       };
       const { data } = await axios.get(
-        `http://localhost:3000/api/message/${selectedChat._id}`,
+        `${import.meta.env.VITE_API_URL}/api/message/${selectedChat._id}`,
         config
       );
       setMessages(data);
@@ -118,7 +117,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         };
         setNewMessage("");
         const { data } = await axios.post(
-          "http://localhost:3000/api/message/",
+         `${import.meta.env.VITE_API_URL}/api/message/`,
           { content: newMessage, chatId: selectedChat._id },
           config
         );

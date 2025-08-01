@@ -18,8 +18,7 @@ const MyChats = ({ fetchAgain }) => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-
-      const { data } = await axios.get("http://localhost:3000/api/chat", config);
+const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/chat`, config);
       setChats(data);
     } catch (err) {
       console.error("Error fetching chats:", err);
