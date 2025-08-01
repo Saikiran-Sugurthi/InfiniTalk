@@ -38,7 +38,7 @@ export default function Chats() {
                 lg:block
               `}
             >
-               {/* 🔙 Back Button for Mobile Only */}
+               
            
               <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
             </div>

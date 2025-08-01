@@ -2,7 +2,8 @@
 const dotenv=require("dotenv");
 dotenv.config();
 const express=require("express");
-// console.log("JWT_SECRET from .env:", process.env.JWT_SECRET);
+// // console.log("JWT_SECRET from .env:", process.env.JWT_SECRET);
+// const path = require('path');
 
 
 const cors = require("cors");
@@ -30,21 +31,44 @@ app.use("/api/user",userRoutes);
 app.use("/api/chat",chatRoutes);
 app.use("/api/message",messageRoutes);
 
-app.get("/",(req,res)=>{
-    res.send("API IS RUNNING")
-})
-app.get("/api/chat",(req,res)=>{
-    res.send(chats)
-});
 
-app.get("/api/chat/:id",(req,res)=>{
+// // -----------------------------------------Deployement
+
+// const __dirname1 = path.resolve();
+// if (process.env.NODE_ENV === 'production') {
+//   // Correct path for Vite's build output
+//   app.use(express.static(path.join(__dirname1, '/frontend/dist')));
+
+//   app.get('*', (req, res) =>
+//     // Correct path for Vite's index.html
+//     res.sendFile(path.resolve(__dirname1, 'frontend', 'dist', 'index.html'))
+//   );
+// } else {
+//   app.get('/', (req, res) => {
+//     res.send('API is running...');
+//   });
+// }
+
+
+
+
+// -----------------------------------------Deployement
+
+// app.get("/",(req,res)=>{
+// //     res.send("API IS RUNNING")
+// })
+// app.get("/api/chat",(req,res)=>{
+//     res.send(chats)
+// });
+
+// app.get("/api/chat/:id",(req,res)=>{
     
-    const singleChat=chats.find((c)=>c._id==req.params.id);
+//     const singleChat=chats.find((c)=>c._id==req.params.id);
 
-    res.send(singleChat);
+//     res.send(singleChat);
 
 
-})
+// })
 
 
 app.use(notFound);
@@ -94,4 +118,21 @@ io.on("connection",(socket)=>{
             })
 
     })
+
+     socket.on("new group", (newGroupChat) => {
+    if (!newGroupChat || !newGroupChat.users) {
+      return console.log("Invalid group data received");
+    }
+
+    // The user who created the group is the groupAdmin
+    const creatorId = newGroupChat.groupAdmin._id;
+
+    newGroupChat.users.forEach((user) => {
+      // Don't send the notification back to the creator
+      if (user._id === creatorId) return;
+
+      // Emit the event to the other members in their specific rooms
+      socket.in(user._id).emit("group received", newGroupChat);
+    });
+  });
 })

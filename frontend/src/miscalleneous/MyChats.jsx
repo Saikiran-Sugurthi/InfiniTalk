@@ -11,6 +11,7 @@ const MyChats = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState();
 
   const fetchChats = async () => {
+    if (!user) return;
     try {
       const config = {
         headers: {
@@ -28,47 +29,49 @@ const MyChats = ({ fetchAgain }) => {
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("userInfo"));
     setLoggedUser(storedUser);
-    fetchChats();
-  }, [fetchAgain]);
+    if (user) {
+        fetchChats();
+    }
+  }, [fetchAgain, user]);
 
   return (
-    <div className="flex flex-col bg-[#2B2D31] p-4 w-full rounded-md shadow-lg h-full text-white">
+    <div className="flex flex-col bg-[var(--background-main)] text-[var(--text-primary)] p-4 w-full rounded-md shadow-lg h-full transition-colors duration-300">
       <div className="flex justify-between items-center mb-4">
         <p className="text-lg font-semibold">My Chats</p>
         <GroupChatModal>
-          <button className="flex items-center gap-2 bg-[#4E5058] hover:bg-[#5c5e68] text-white px-4 py-2 rounded-lg transition">
+          <button className="flex items-center gap-2 bg-[var(--background-button)] hover:bg-[var(--background-button-hover)] text-[var(--text-primary)] px-4 py-2 rounded-lg transition-colors duration-200">
             New Group Chat
             <i className="fa-solid fa-plus text-sm"></i>
           </button>
         </GroupChatModal>
       </div>
 
-      <div className="flex flex-col items-center p-3 rounded-lg w-full h-full overflow-y-hidden bg-[#1E1F22]">
+      <div className="flex flex-col items-center p-3 rounded-lg w-full h-full overflow-y-hidden bg-[var(--background-chat-list)] transition-colors duration-300">
         {chats ? (
           <div className="w-full overflow-y-scroll h-full pr-1 custom-scrollbar">
             {chats.map((chat) => (
               <div
                 onClick={() => setSelectedChat(chat)}
                 key={chat._id}
-                className={`cursor-pointer px-3 py-2 mb-2 flex items-start gap-3 rounded-md transition duration-150 ${
+                className={`cursor-pointer px-3 py-2 mb-2 flex items-start gap-3 rounded-md transition-colors duration-150 ${
                   selectedChat?._id === chat._id
-                    ? "bg-[#5865F2] text-white"
-                    : "bg-[#313338] hover:bg-[#3C3F45] text-gray-200"
+                    ? "bg-[var(--background-chat-item-selected)] text-[var(--text-chat-item-selected)]"
+                    : "bg-[var(--background-chat-item)] hover:bg-[var(--background-chat-item-hover)] text-[var(--text-chat-item)]"
                 }`}
               >
                 <Avatar
-                  src={chat.pic}
-                  alt={chat.name}
+                  src={!chat.isGroupChat && chat.users.length > 1 ? getSender(loggedUser, chat.users)?.pic : chat.pic}
+                  alt={!chat.isGroupChat && loggedUser ? getSender(loggedUser, chat.users) : chat.chatName}
                   sx={{ width: 36, height: 36 }}
                 />
                 <div className="flex flex-col overflow-hidden">
                   <span className="font-medium truncate">
-                    {!chat.isGroupChat
+                    {!chat.isGroupChat && loggedUser && chat.users
                       ? getSender(loggedUser, chat.users)
                       : chat.chatName}
                   </span>
                   {chat.latestMessage && (
-                    <span className="text-sm text-gray-400 truncate w-[180px]">
+                    <span className="text-sm text-[var(--text-chat-item-latest)] truncate w-[180px]">
                       <strong>{chat.latestMessage.sender.name}: </strong>
                       {chat.latestMessage.content.length > 50
                         ? chat.latestMessage.content.slice(0, 50) + "..."

@@ -1,5 +1,5 @@
 const express=require("express");
-const { route } = require("./userRoutes");
+
 const { protect } = require("../middlewares/authMiddleWare");
 const {sendMessage,allMessages}=require("../controllers/messageControllers")
 

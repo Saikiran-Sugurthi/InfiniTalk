@@ -73,43 +73,38 @@ const fetchChats=asyncHandler(async(req,res)=>{
 
 });
 
+const createGroupChat = asyncHandler(async (req, res) => {
+  if (!req.body.users || !req.body.name) {
+    return res.status(400).send({ message: "Please Fill All The Fields" });
+  }
 
-const createGroupChat=asyncHandler(async(req,res)=>{
-    if(!req.body.users || !req.body.name){
-        return res.status(400).send({message:"Please Fill All The Fields"});
-    }
+  var users = JSON.parse(req.body.users);
 
-    var users = JSON.parse(req.body.users);
+  if (users.length < 2) {
+    // FIX: Change status code to 400 for a validation error
+    return res.status(400).send({ message: "More than 2 users are required to form a group chat" });
+  }
 
+  users.push(req.user);
 
-    if(users.length <2){
-        return res.status(200).send({message:"More than 2 users are required to form a group chat"});
-    }
+  try {
+    const groupChat = await Chat.create({
+      chatName: req.body.name,
+      users: users,
+      isGroupChat: true,
+      groupAdmin: req.user,
+    });
 
-    users.push(req.user);
+    const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
 
-
-
-    try{
-        const groupChat= await Chat.create({
-            chatName:req.body.name,
-            users:users,
-            isGroupChat:true,
-            groupAdmin:req.user,
-        });
-
-        const fullGroupChat=await Chat.findOne({_id:groupChat._id})
-        .populate("users","-password")
-        .populate("groupAdmin","-password");
-
-        res.status(200).json(fullGroupChat);
-
-    }
-    catch(err){
-        res.status(400);
-        throw new Error(error.message);
-    }
-})
+    res.status(200).json(fullGroupChat);
+  } catch (err) {
+    res.status(400);
+    throw new Error(err.message);
+  }
+});
 
 const renameGroup=asyncHandler(async(req,res)=>{
 

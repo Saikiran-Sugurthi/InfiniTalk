@@ -70,7 +70,7 @@ export default function Drawer() {
   const DrawerList = (
     <Box
       sx={{ width: 300 }}
-      className="bg-[#2B2D31] h-full text-white flex flex-col"
+      className="bg-[var(--background-modal-input)] h-full text-[var(--text-primary)] flex flex-col"
       role="presentation"
     >
       <div className="p-4">
@@ -80,11 +80,11 @@ export default function Drawer() {
             value={search}
             placeholder="Search by name or email"
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-grow px-3 py-2 bg-[#1E1F22] text-white border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-grow px-3 py-2 bg-[var(--background-chat-list)] text-[var(--text-primary)] border-[var(--border-color)] rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--accent-focus-ring)]"
           />
           <button
             onClick={handleSearch}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-sm font-semibold"
+            className="px-4 py-2 bg-[var(--accent-send-button)] hover:bg-[var(--accent-send-button-hover)] rounded-md text-sm font-semibold"
           >
             Go
           </button>

@@ -18,3 +18,100 @@
   background-color: #40444B;
   border-radius: 3px;
 }
+
+
+/*
+  CSS Theme Variables
+  - :root contains the default (Light Mode) styles.
+  - .dark contains the Dark Mode styles.
+*/
+
+/* Light Theme (Default) */
+:root {
+  --background-header: #FFFFFF;
+  --background-input: #F3F4F6;
+  --text-primary: #111827;
+  --border-color: #E5E7EB;
+  --accent-hover: #E5E7EB;
+  --background-main: #f9fafb;
+  --background-button: #e5e7eb;
+  --background-button-hover: #d1d5db;
+  --background-chat-list: #FFFFFF;
+  --background-chat-item: #F3F4F6;
+  --background-chat-item-hover: #E5E7EB;
+  --background-chat-item-selected: #3b82f6;
+  --text-chat-item: #374151;
+  --text-chat-item-latest: #6b7280;
+  --text-chat-item-selected: #FFFFFF;
+  --background-user-item: #F3F4F6;
+  --background-user-item-hover: #BFDBFE;
+  --text-user-item-primary: #1f2937;
+  --text-user-item-secondary: #4b5563;
+  --background-chat-window: #FFFFFF;
+  --background-chat-body: #E8E8E8;
+  --accent-send-button: #3b82f6;
+  --accent-send-button-hover: #2563eb;
+  --accent-focus-ring: #3b82f6;
+  --text-placeholder: #9CA3AF;
+  --text-muted: #6B7280;
+  --background-modal: #FFFFFF;
+  --background-modal-input: #F3F4F6;
+  --background-backdrop: rgba(0, 0, 0, 0.4);
+  --accent-focus-ring-alt: #4ade80; /* green-400 */
+  --background-danger: #ef4444; /* red-500 */
+  --background-danger-hover: #dc2626; /* red-600 */
+}
+
+/* Dark Theme */
+.dark {
+  --background-header: #2f3136;
+  --background-input: #40444b;
+  --text-primary: #FFFFFF;
+  --border-color: #202225;
+  --accent-hover: #4f545c;
+  --background-main: #2C2F33;
+  --background-button: #4E5058;
+  --background-button-hover: #5c5e68;
+  --background-chat-list: #1E1F22;
+  --background-chat-item: #313338;
+  --background-chat-item-hover: #3C3F45;
+  --background-chat-item-selected: #5865F2;
+  --text-chat-item: #D1D5DB;
+  --text-chat-item-latest: #9CA3AF;
+  --text-chat-item-selected: #FFFFFF;
+  --background-user-item: #313338;
+  --background-user-item-hover: #4f545c;
+  --text-user-item-primary: #F9FAFB;
+  --text-user-item-secondary: #9CA3AF;
+  --background-chat-window: #2C2F33;
+  --background-chat-body: #2C2F33;
+  --accent-send-button: #7289DA;
+  --accent-send-button-hover: #5b6eae;
+  --accent-focus-ring: #7289DA;
+  --text-placeholder: #72767d;
+  --text-muted: #9CA3AF;
+  --background-modal: #313338;
+  --background-modal-input: #2B2D31;
+  --background-backdrop: rgba(0, 0, 0, 0.6);
+  --accent-focus-ring-alt: #4ade80;
+  --background-danger: #ef4444;
+  --background-danger-hover: #dc2626;
+}
+
+/* Optional: Adds a smooth transition when the theme changes */
+body {
+  background-color: var(--background-main);
+  transition: background-color 0.3s ease-in-out;
+}
+
+/* Custom scrollbar to match themes */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 20px;
+}
