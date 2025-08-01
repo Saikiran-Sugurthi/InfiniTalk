@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ChatState } from "../context/ChatProvider";
 import ChatLoading from "./ChatLoading";
-import { getSender } from "../config/ChatLogics";
+import { getSender,getSenderFull } from "../config/ChatLogics";
 import Avatar from "@mui/material/Avatar";
 import GroupChatModal from "../miscalleneous/GropupChatModal";
 
