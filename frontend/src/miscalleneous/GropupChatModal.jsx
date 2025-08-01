@@ -8,6 +8,15 @@ import { useToast } from '../../components/ToastContext';
 import axios from 'axios';
 import UserListItem from './UserListItem';
 import UserBadgeItem from '../miscalleneous/UserBadgeItem';
+import { io } from "socket.io-client";
+import { useEffect } from 'react';
+
+
+const ENDPOINT = "http://localhost:3000";
+var socket;
+
+
+
 
 export default function GroupChatModal({ children }) {
   const [open, setOpen] = useState(false);
@@ -29,35 +38,84 @@ export default function GroupChatModal({ children }) {
     setGroupChatName("");
   };
 
-  const handleSubmit = async () => {
-    if (!groupChatName || !selectedUsers.length) {
-      showToast("Fill All The Fields !!!", "error");
+   useEffect(() => {
+    // This logic is better placed in a higher-level component like ChatPage
+    // to establish a single, persistent connection.
+    socket = io(ENDPOINT);
+    socket.emit("setup", user);
+    
+    // Note: The lines for 'setSocketConnected' and 'setIsTyping' from your
+    // original code will cause errors here because those states are not defined
+    // in this component. This logic likely belongs in your main chat window.
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [user]);
+
+  useEffect(() => {
+    if (!socket) {
       return;
     }
 
-    try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${user.token}`
-        }
-      };
+    const groupReceivedHandler = (newChatReceived) => {
+      // This function runs when another user adds you to a group.
+      // It adds the new group chat to your state.
+      setChats((prevChats) => [newChatReceived, ...prevChats]);
+    };
 
-      const { data } = await axios.post(
-        `http://localhost:3000/api/chat/group`,
-        {
-          name: groupChatName,
-          users: JSON.stringify(selectedUsers.map(u => u._id))
-        },
-        config
-      );
+    // Set up the listener
+    socket.on("group received", groupReceivedHandler);
 
-      setChats([data, ...chats]);
-      handleClose();
-      showToast("Group Chat Created Successfully!", "success");
-    } catch (err) {
-      showToast(err.message, "error");
+    // Cleanup: remove the listener when the component unmounts
+    return () => {
+      socket.off("group received", groupReceivedHandler);
+    };
+  }, [socket, setChats]);
+
+
+ const handleSubmit = async () => {
+  if (!groupChatName || !selectedUsers.length) {
+    showToast("Please provide a group name and add users!", "error");
+    return;
+  }
+  
+  // FIX: Add a check for the minimum number of users
+  if (selectedUsers.length < 2) {
+    showToast("A group must have at least 2 other members.", "error");
+    return;
+  }
+
+  
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      `http://localhost:3000/api/chat/group`,
+      {
+        name: groupChatName,
+        users: JSON.stringify(selectedUsers.map((u) => u._id)),
+      },
+      config
+    );
+
+    setChats([data, ...chats]);
+    //sends signal so that the grp appears in chats immediately
+        if (socket) {
+      socket.emit("new group", data);
     }
-  };
+
+    handleClose();
+    showToast("Group Chat Created Successfully!", "success");
+  } catch (err) {
+    // Now this will catch the 400 error from the backend correctly
+    showToast(err.response?.data?.message || "Failed to create group chat", "error");
+  }
+};
 
   const groupAdd = (userToAdd) => {
     if (selectedUsers.includes(userToAdd)) {
@@ -99,20 +157,20 @@ export default function GroupChatModal({ children }) {
       </span>
 
       <Modal open={open} onClose={handleClose} aria-labelledby="group-chat-modal">
-        <Box className="bg-[#313338] text-white w-[90%] max-w-md mx-auto mt-24 p-6 rounded-lg shadow-lg space-y-4 outline-none border border-gray-700">
+        <Box className="bg-[var(--background-modal)] text-[var(--text-primary)] w-[90%] max-w-md mx-auto mt-24 p-6 rounded-lg shadow-lg space-y-4 outline-none border border-[var(--border-color)]">
           <Typography id="group-chat-modal" variant="h6" className="font-semibold text-white text-lg">
             Create Group Chat
           </Typography>
 
           <input
-            className="w-full px-4 py-2 bg-[#2B2D31] border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 bg-[var(--background-modal-input)] border-[var(--border-color)] text-[var(--text-primary)] placeholder-[var(--text-placeholder)]  focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Group Name"
             type="text"
             onChange={(e) => setGroupChatName(e.target.value)}
           />
 
           <input
-            className="w-full px-4 py-2 bg-[#2B2D31] border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 bg-[var(--background-modal-input)] border-[var(--border-color)] text-[var(--text-primary)] placeholder-[var(--text-placeholder)]  focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Select Users"
             type="text"
             onChange={(e) => handleSearch(e.target.value)}
@@ -138,7 +196,7 @@ export default function GroupChatModal({ children }) {
 
           <button
             onClick={handleSubmit}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-md transition duration-200"
+            className="w-full bg-[var(--accent-send-button)] hover:bg-[var(--accent-send-button-hover)] text-white font-medium py-2 rounded-md transition duration-200"
           >
             Create Chat
           </button>

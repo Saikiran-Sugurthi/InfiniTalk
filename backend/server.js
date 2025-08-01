@@ -94,4 +94,21 @@ io.on("connection",(socket)=>{
             })
 
     })
+
+     socket.on("new group", (newGroupChat) => {
+    if (!newGroupChat || !newGroupChat.users) {
+      return console.log("Invalid group data received");
+    }
+
+    // The user who created the group is the groupAdmin
+    const creatorId = newGroupChat.groupAdmin._id;
+
+    newGroupChat.users.forEach((user) => {
+      // Don't send the notification back to the creator
+      if (user._id === creatorId) return;
+
+      // Emit the event to the other members in their specific rooms
+      socket.in(user._id).emit("group received", newGroupChat);
+    });
+  });
 })

@@ -8,7 +8,7 @@ import ScrollableChat from "../components/ScrollableChat";
 import { io } from "socket.io-client";
 import axios from "axios";
 import { useToast } from "./ToastContext";
-import { Avatar } from "@mui/material"; // Added for the new UI
+import { Avatar } from "@mui/material";
 
 const ENDPOINT = "http://localhost:3000";
 var socket, selectedChatCompare;
@@ -62,7 +62,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     }
   };
 
-  // This `useEffect` runs when the component mounts to set up the socket
   useEffect(() => {
     socket = io(ENDPOINT);
     socket.emit("setup", user);
@@ -70,44 +69,42 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     socket.on("typing", () => setIsTyping(true));
     socket.on("stop typing", () => setIsTyping(false));
     
-    // Optional: Cleanup on unmount
     return () => {
       socket.disconnect();
     };
   }, []);
 
-  // This `useEffect` runs when the selectedChat changes
   useEffect(() => {
-    fetchMessages();
-    setNotifications(
-      notifications.filter((n) => n.chat._id !== selectedChat?._id)
-    );
-    selectedChatCompare = selectedChat;
+    if (selectedChat) {
+      fetchMessages();
+      setNotifications(
+        notifications.filter((n) => n.chat._id !== selectedChat._id)
+      );
+      selectedChatCompare = selectedChat;
+    }
   }, [selectedChat]);
 
-  // This `useEffect` listens for incoming messages.
-  // It uses the logic from your old, working code.
   useEffect(() => {
-    socket.on("message recieved", (newMessageRecieved) => {
+    const handleMessageReceived = (newMessageRecieved) => {
       if (
-        !selectedChatCompare || // If chat is not selected or doesn't match
+        !selectedChatCompare ||
         selectedChatCompare._id !== newMessageRecieved.chat._id
       ) {
-        // Give notification
         if (!notifications.some((n) => n._id === newMessageRecieved._id)) {
           setNotifications((prev) => [newMessageRecieved, ...prev]);
           setFetchAgain(!fetchAgain);
         }
       } else {
-        // Add to the current chat's messages
         setMessages((prevMessages) => [...prevMessages, newMessageRecieved]);
       }
-    });
-    // We add a cleanup function to avoid multiple listeners
-    return () => {
-      socket.off("message recieved");
     };
-  }); // Note: No dependency array, or use `[]` if issues persist. The original had `[]` and worked. Let's stick to the most robust pattern.
+
+    socket.on("message recieved", handleMessageReceived);
+
+    return () => {
+      socket.off("message recieved", handleMessageReceived);
+    };
+  }, [notifications, fetchAgain, setFetchAgain, setNotifications]);
 
   const sendMessage = async (event) => {
     if ((event.key === "Enter" || event.type === "click") && newMessage) {
@@ -119,7 +116,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             Authorization: `Bearer ${user.token}`,
           },
         };
-        setNewMessage(""); // Clear input immediately
+        setNewMessage("");
         const { data } = await axios.post(
           "http://localhost:3000/api/message/",
           { content: newMessage, chatId: selectedChat._id },
@@ -153,16 +150,18 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     }, timerLength);
   };
 
- return (
+  return (
     <>
       {selectedChat ? (
-        <div className="flex flex-col h-full w-full bg-[#2C2F33] text-white rounded-lg shadow-inner">
+        // ✅ FIX 1: Added a space between text-[var(--text-primary)] and rounded-lg
+        <div className="flex flex-col h-full w-full bg-[var(--background-chat-window)] text-[var(--text-primary)] rounded-lg shadow-inner transition-colors duration-300">
           {/* Chat Header */}
-          <div className="flex justify-between items-center px-4 py-3 border-b border-[#4F545C] bg-[#23272A]">
+          <div className="flex justify-between items-center px-4 py-3 border-b border-[var(--border-color)] bg-[var(--background-header)] transition-colors duration-300">
             <div className="text-lg font-semibold tracking-wide flex justify-center items-center gap-3">
+              {/* ✅ FIX 2: Replaced hardcoded text-white with CSS variable */}
               <button
                 onClick={() => setSelectedChat(null)}
-                className="md:hidden text-white py-1 rounded"
+                className="cursor-pointer text-[var(--text-primary)] py-1 rounded"
               >
                 <i className="fa-solid fa-arrow-left"></i>
               </button>
@@ -188,14 +187,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           </div>
 
           {/* Chat Body */}
-          <div className="flex-1 p-4 overflow-y-auto bg-[#2C2F33]">
+          <div className="flex-1 p-4 overflow-y-auto bg-[var(--background-chat-body)] transition-colors duration-300">
             {loading ? (
               <div className="flex justify-center items-center h-full">
-                <CircularProgress size={50} sx={{ color: "#7289DA" }} />
+                <CircularProgress size={50} sx={{ color: "var(--accent-send-button)" }} />
               </div>
             ) : (
               <>
-                {/* ✅ FIX: isTyping prop is now passed correctly for the animation */}
                 <ScrollableChat messages={messages} isTyping={isTyping} />
                 <div ref={messagesEndRef} />
               </>
@@ -203,7 +201,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           </div>
 
           {/* Input */}
-          <div className="px-4 py-2 bg-[#23272A] border-t border-[#4F545C]">
+          <div className="px-4 py-2 bg-[var(--background-header)] border-t border-[var(--border-color)] transition-colors duration-300">
             <div className="flex items-center gap-2">
               <input
                 type="text"
@@ -211,10 +209,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 onKeyDown={sendMessage}
                 value={newMessage}
                 onChange={typingHandler}
-                className="flex-1 px-4 py-2 text-sm rounded-full bg-[#40444B] text-white border border-[#4F545C] focus:outline-none focus:ring-2 focus:ring-[#7289DA]"
+                className="flex-1 px-4 py-2 text-sm rounded-full bg-[var(--background-input)] text-[var(--text-primary)] border-[var(--border-color)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-focus-ring)] placeholder-[var(--text-placeholder)] transition-colors duration-300"
               />
               <button
-                className="bg-[#7289DA] hover:bg-[#5b6eae] text-white px-4 py-2 rounded-full transition"
+                className="bg-[var(--accent-send-button)] hover:bg-[var(--accent-send-button-hover)] text-white px-4 py-2 rounded-full transition-colors duration-300"
                 onClick={sendMessage}
               >
                 <i className="fa-solid fa-paper-plane" />
@@ -223,8 +221,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           </div>
         </div>
       ) : (
-        <div className="flex justify-center items-center h-full w-full text-white bg-[#2C2F33]">
-          <p className="text-2xl opacity-60">
+        <div className="flex justify-center items-center h-full w-full text-[var(--text-muted)] bg-[var(--background-main)] transition-colors duration-300">
+          <p className="text-2xl">
             Click on any user to start chatting
           </p>
         </div>
