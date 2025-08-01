@@ -22,7 +22,7 @@ connectToDB();
 const app=express();
 
 app.use(cors({
-    origin:["http://localhost:3000","http://localhost:5173"],
+      origin: process.env.FRONTEND_URL,
      credentials: true
 }));
 app.use(express.json());
@@ -81,7 +81,7 @@ const server=app.listen(PORT,console.log("SERVER LISTENING ON PORT 3000"));
 const io=require("socket.io")(server,{
     pingTimeOut:60000,
     cors:{
-        origin:"http://localhost:5173"
+        origin: process.env.FRONTEND_URL,
     }
 })
 
