@@ -40,7 +40,7 @@ export default function SignUp() {
         headers: { "Content-type": "application/json" },
       };
       const { data } = await axios.post(
-        "http://localhost:3000/api/user",
+         `${import.meta.env.VITE_API_URL}/api/user`,
         { name, email, password, pic },
         config
       );

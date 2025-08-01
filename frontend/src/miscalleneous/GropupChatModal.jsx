@@ -10,9 +10,7 @@ import UserListItem from './UserListItem';
 import UserBadgeItem from '../miscalleneous/UserBadgeItem';
 import { io } from "socket.io-client";
 import { useEffect } from 'react';
-
-
-const ENDPOINT = "http://localhost:3000";
+const ENDPOINT = import.meta.env.VITE_API_URL;
 var socket;
 
 
@@ -95,7 +93,7 @@ export default function GroupChatModal({ children }) {
     };
 
     const { data } = await axios.post(
-      `http://localhost:3000/api/chat/group`,
+      `${import.meta.env.VITE_API_URL}/api/chat/group`,
       {
         name: groupChatName,
         users: JSON.stringify(selectedUsers.map((u) => u._id)),
@@ -141,7 +139,7 @@ export default function GroupChatModal({ children }) {
       };
 
       setLoading(true);
-      const { data } = await axios.get(`http://localhost:3000/api/user/?search=${query}`, config);
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/?search=${query}`, config);
       setSearchResults(data);
       setLoading(false);
     } catch (error) {

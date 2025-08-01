@@ -32,7 +32,7 @@ export default function Drawer() {
         }
       };
 
-      const { data } = await axios.post("http://localhost:3000/api/chat", { userId }, config);
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/api/chat`, { userId }, config);
 
       if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
 
@@ -59,7 +59,7 @@ export default function Drawer() {
         }
       };
 
-      const { data } = await axios.get(`http://localhost:3000/api/user/?search=${search}`, config);
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/?search=${search}`, config);
       setSearchResults(data);
       setLoading(false);
     } catch (err) {

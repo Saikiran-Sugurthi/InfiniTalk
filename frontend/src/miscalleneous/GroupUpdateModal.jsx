@@ -41,7 +41,7 @@ export default function GroupUpdateModal({fetchAgain,setFetchAgain}) {
         }
     }
 
-    const {data}=await axios.put("http://localhost:3000/api/chat/groupremove",{
+    const {data} = await axios.put(`${import.meta.env.VITE_API_URL}/api/chat/groupremove`,{
         chatId:selectedChat._id,
         userId:user1._id
     },config)
@@ -87,7 +87,7 @@ export default function GroupUpdateModal({fetchAgain,setFetchAgain}) {
 
 
             setLoading(true)
-            const {data}=await axios.get(`http://localhost:3000/api/user/?search=${search}`,config);
+             const {data} = await axios.get(`${import.meta.env.VITE_API_URL}/api/user/?search=${query}`, config);
             console.log(data);
             setSearchResults(data);
             setLoading(false);
@@ -123,7 +123,7 @@ export default function GroupUpdateModal({fetchAgain,setFetchAgain}) {
             }
         };
 
-        const {data}= await axios.put("http://localhost:3000/api/chat/groupadd",{
+        const {data} = await axios.put(`${import.meta.env.VITE_API_URL}/api/chat/groupadd`,{
             chatId:selectedChat._id,
             userId:user1._id
         },config);
@@ -156,7 +156,7 @@ export default function GroupUpdateModal({fetchAgain,setFetchAgain}) {
             }
         }
 
-        const {data}=await axios.put("http://localhost:3000/api/chat/rename",{
+        const {data} = await axios.put(`${import.meta.env.VITE_API_URL}/api/chat/rename`,{
             chatId:selectedChat._id,
             chatName:groupName,
         },config);
