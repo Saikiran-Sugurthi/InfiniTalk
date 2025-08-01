@@ -59,8 +59,9 @@ const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/chat`, con
                 }`}
               >
                 <Avatar
-                  src={!chat.isGroupChat && chat.users.length > 1 ? getSender(loggedUser, chat.users)?.pic : chat.pic}
-                  alt={!chat.isGroupChat && loggedUser ? getSender(loggedUser, chat.users) : chat.chatName}
+                  // ✅ FIX 2: Use getSenderFull() to get the user object, then access its .pic property.
+                  src={!chat.isGroupChat ? getSenderFull(user, chat.users)?.pic : chat.pic}
+                  alt={!chat.isGroupChat ? getSender(user, chat.users) : chat.chatName}
                   sx={{ width: 36, height: 36 }}
                 />
                 <div className="flex flex-col overflow-hidden">
