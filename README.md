@@ -1,7 +1,7 @@
-[InfiniTalk - Real-Time Chat Application
+InfiniTalk - Real-Time Chat Application
 InfiniTalk is a full-stack, real-time chat application built with the MERN stack (MongoDB, Express.js, React.js, Node.js) and Socket.IO. It provides a seamless and interactive chatting experience, supporting both one-on-one and group conversations with features like user authentication, real-time messaging, typing indicators, and a theme switcher.
 
-Live Demo : https://infini-talk.vercel.app/
+Live Demo: infini-talk.vercel.app
 
 Features
 User Authentication: Secure user registration and login using JSON Web Tokens (JWT).
@@ -64,7 +64,7 @@ MongoDB Atlas account or a local MongoDB instance
 Installation & Setup
 Clone the repository:
 
-git clone [https://github.com/Saikiran-Sugurthi/InfiniTalk](https://github.com/Saikiran-Sugurthi/InfiniTalk.git)
+git clone [https://github.com/Saikiran-Sugurthi/InfiniTalk.git](https://github.com/Saikiran-Sugurthi/InfiniTalk.git)
 cd InfiniTalk
 
 Backend Setup:
@@ -136,4 +136,4 @@ InfiniTalk/
 │       └── App.jsx
 └── README.md
 
-](https://infini-talk.vercel.app/)
+Contact
