@@ -1,6 +1,4 @@
-Got it 👍 — here’s your **final, ready-to-paste README.md** with your **hardcoded links** (GitHub + LinkedIn) and perfectly formatted for GitHub display.
 
----
 
 ````markdown
 # 💬 InfiniTalk - Real-Time Chat Application
