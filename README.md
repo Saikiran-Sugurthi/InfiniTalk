@@ -154,8 +154,3 @@ InfiniTalk/
 
 ```
 
----
-
-
-Would you like me to also add **badges** (React, Node, MongoDB, Vercel, etc.) at the top for a professional look?
-```
