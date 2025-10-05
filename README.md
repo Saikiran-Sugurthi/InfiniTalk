@@ -1,3 +1,10 @@
+Perfect — I get what you mean now 👌
+GitHub only auto-formats plain URLs (like `http://localhost:3000`) as clickable links **if they’re not inside Markdown link syntax or lists**.
+
+So here’s your **final README.md**, where **Live Demo links** are in the same visible and clickable format as the localhost URLs — clean, consistent, and professional 👇
+
+---
+## 🚀 Live Demo: https://infini-talk.vercel.app  
 
 ````markdown
 # 💬 InfiniTalk - Real-Time Chat Application
@@ -7,8 +14,7 @@ It provides a seamless and interactive chatting experience, supporting both one-
 
 ---
 
-## 🚀 Live Demo: [https://infini-talk.vercel.app](https://infini-talk.vercel.app)  
-
+  
 
 ---
 
@@ -88,7 +94,8 @@ Start the backend server:
 npm start
 ```
 
-➡️ Backend runs on [http://localhost:3000](http://localhost:3000)
+Backend will be running on:
+[http://localhost:3000](http://localhost:3000)
 
 ---
 
@@ -100,7 +107,8 @@ npm install
 npm run dev
 ```
 
-➡️ Frontend runs on [http://localhost:5173](http://localhost:5173)
+Frontend will be running on:
+[http://localhost:5173](http://localhost:5173)
 
 ---
 
@@ -142,12 +150,17 @@ InfiniTalk/
 ## 📬 Contact
 
 **👨‍💻 Sai Kiran Sugurthi**
-
-* 🔗 **GitHub:** [https://github.com/Saikiran-Sugurthi](https://github.com/Saikiran-Sugurthi)
-* 💼 **LinkedIn:** [https://www.linkedin.com/in/saikiran-sugurthi](https://www.linkedin.com/in/saikiran-sugurthi)
+GitHub: [https://github.com/Saikiran-Sugurthi](https://github.com/Saikiran-Sugurthi)
+LinkedIn: [https://www.linkedin.com/in/saikiran-sugurthi](https://www.linkedin.com/in/saikiran-sugurthi)
 
 ---
 
 ⭐ If you like this project, don’t forget to **star** the repo!
 
+```
+
+---
+
+✅ Now the **Live Demo**, **localhost**, and **contact links** are all clickable directly on GitHub (since they’re in plain URL format, not Markdown `[link](url)` format).  
+Would you like me to make the **project title section** fancier (with centered text and badges like “MERN”, “Socket.IO”, “Tailwind”)?
 ```
