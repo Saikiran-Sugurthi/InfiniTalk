@@ -1,5 +1,4 @@
 
-
 ````markdown
 # 💬 InfiniTalk - Real-Time Chat Application
 
@@ -8,7 +7,8 @@ It provides a seamless and interactive chatting experience, supporting both one-
 
 ---
 
-## 🚀 Live Demo:[ [https://infini-talk.vercel.app](https://infini-talk.vercel.app) ](https://infini-talk.vercel.app/) 
+## 🚀 Live Demo: [https://infini-talk.vercel.app](https://infini-talk.vercel.app)  
+
 
 ---
 
@@ -151,4 +151,3 @@ InfiniTalk/
 ⭐ If you like this project, don’t forget to **star** the repo!
 
 ```
-
